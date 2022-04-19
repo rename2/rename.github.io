@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>rename</title>
+  
+  <subtitle>It&#39;s talent and sweat</subtitle>
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2022-04-19T13:33:04.101Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>rename</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>hello</title>
+    <link href="http://example.com/2022/04/19/hello/"/>
+    <id>http://example.com/2022/04/19/hello/</id>
+    <published>2022-04-19T13:25:04.000Z</published>
+    <updated>2022-04-19T13:33:04.101Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="/2022/04/19/hello/image-20220419212821908.png" alt="mypic"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/2022/04/19/hello/image-20220419212821908.png&quot; alt=&quot;mypic&quot;&gt;&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
