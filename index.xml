@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Rename</title>
-    <link>https://example.org/</link>
+    <link>https://rename2.github.io/</link>
     <description>Recent content on Rename</description>
     <generator>Hugo -- 0.136.5</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 03 Nov 2024 16:22:39 +0800</lastBuildDate>
-    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://rename2.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>自定义的SSH代理服务器支持端口转发实践</title>
-      <link>https://example.org/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
+      <link>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 03 Nov 2024 16:22:39 +0800</pubDate>
-      <guid>https://example.org/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
+      <guid>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
       <description>端口转发(Port Forwarding)是SSH中的一种机制，可以通过已经建立的SSH连接转发其他端口和应用的网络流量。SSH通道本身提供了加密和解密功能，保障了传输的安全性，所以端口转发机制也被称为隧道(tunneling)。</description>
     </item>
   </channel>
