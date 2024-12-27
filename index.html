@@ -2,25 +2,25 @@
 <html lang="en" dir="auto">
 
 <head>
-	<meta name="generator" content="Hugo 0.136.5"><meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.136.5"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Rename</title>
 
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://rename2.github.io/">
+<link rel="canonical" href="http://localhost:1313/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://rename2.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://rename2.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://rename2.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://rename2.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://rename2.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://rename2.github.io/index.xml">
-<link rel="alternate" hreflang="en" href="https://rename2.github.io/">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,28 +57,7 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="Rename" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://rename2.github.io/" />
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Rename"/>
-<meta name="twitter:description" content=""/>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Rename",
-  "url": "https://rename2.github.io/",
-  "description": "",
-  "thumbnailUrl": "https://rename2.github.io/favicon.ico",
-  "sameAs": [
-      
-  ]
-}
-</script>
+</noscript>
 </head>
 
 <body class="list" id="top">
@@ -96,7 +75,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://rename2.github.io/" accesskey="h" title="Rename (Alt + H)">Rename</a>
+            <a href="http://localhost:1313/" accesskey="h" title="Rename (Alt + H)">Rename</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -122,12 +101,12 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://rename2.github.io/categories/" title="分类">
+                <a href="http://localhost:1313/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://rename2.github.io/archives/" title="归档">
+                <a href="http://localhost:1313/archives/" title="归档">
                     <span>归档</span>
                 </a>
             </li>
@@ -138,6 +117,27 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">终端转义序列介绍
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>概述 当我们日常登录机器，无论是SSH、RDP还是VNC连接，我们都在使用终端。终端(Terminal)是一种输入输出设备，用于人类用户和计算机的交互。其中最常见的终端类型是面向字符的终端，也就是每次与主机通信一个字符，而不是一个数据块。字符可以是控制字符，也可以是a-zA-Z0-9这些可打印字符。一串字符组成了字符序列，可以用于控制终端和字体颜色、光标位置、切换输入模式（如替换模式）等，这样的字符序列称为转义序列。
+根据对控制字符和转义序列的支持程度不同，面向字符的终端被分为“哑终端”和“智能终端”。哑终端(dumb terminal)只能解释有限的控制字符（如CR、LF等），但无法处理清除行、移动光标等转义序列。智能终端(smart terminal)是有转义序列处理能力的终端，支持VT100、ANSI等转义序列。
+转义序列标准，如VT52，来源于物理硬件终端。这些终端使用供应商特定的转义序列处理比如光标放在屏幕上指定位置的操作，虽然功能相同，但序列不同。程序也不得不根据终端的型号发送对应的转义序列，以保证终端的正常显示。于是ANSI标准出现了，它制定了所有终端都采用的命令集，并且要求所有数字信息作为 ASCII 数字传输。VT100终端最先支持了ANSI序列，并由于在市场上的成功成为了后来终端仿真器事实上的标准。
+之后个人计算机开始普及，软件可以在PC上模拟、而不用增设昂贵的硬件终端。这种模拟终端的计算机程序被称为终端模拟器（终端仿真器）。xterm是X Window 系统的标准终端仿真器。X Window 系统是用于位图显示的窗口系统，常见于类Unix操作系统上（如Darwin，macOS的核心）。因为X协议一直处于版本11的状态，也称为X11。SSH中的X11 forwarding也是对于X Window的转发支持。xterm支持ANSI、VT52、VT100等控制协议，还添加了一些其他终端仿真器已采用的协议，如16色终端协议、88色终端协议和256色终端协议。打开终端、查询环境变量TERM，可能看到值为“xterm-256color”，表示采用xterm的256色终端协议。
+ANSI标准 单字节字符也可以控制终端，这些字符称为C0控制代码(C0 control codes)，由ASCII 0到31共32个控制字符组成，例如
+BEL（0x7）：发出蜂鸣 BS （0x8, \b）：退格，向左移动光标 LF（0xA, \n）：换行 CR（0xD, \r）：将光标移到第0列 ESC（0x1B）：启动转义序列 所有转义序列都以ASCII字符ESC开始，第二个字符指定对应的子序列或命令。其中第二个字符范围为@A-Z[\]^_的序列称为C1控制代码(C1 control codes)，例如
+ESC [：CSI(Control Sequence Introducer)，大部分常用序列都是CSI ESC ]：OSC(Operating System Command)，操作系统使用的控制序列，比如窗口标题、设置调色板颜色 ESC c：重置为初始状态，包括图形格式、默认字体等 Control Sequence Introducer(CSI) 以ESC[（也可以写成\e[ 或者 033[）为前缀，CSI序列的基本格式为parameter intermediate final。
+parameter：0–9:;&lt;=&gt;?中的字符，表示控制操作的参数，比如删除的字符数量 可以为空，序列会设置自定义的默认参数，比如默认为1、删除1个字符 也可以是分号分隔的数字，如1;2;3，中间缺失的数字视为0，比如1;;3等同于1;0;3，设置显示属性序列中常用（设置字体为粗体、前景色、背景色等） intermediate：!&#34;#$%&amp;&#39;()*&#43;,-./中的任意数量字符，大部分序列不用 final：@A-Z[\]^_`a–z{|}~中的单个字符，表示操作，比如K表示清除本行字符(Erase in Line) CSI示例
+CSI n C：光标向前移动n个单元格 CSI n G：移动光标到第n列（n默认为1） CSI n K：清除本行字符（但不移动光标），如果n为0，清除从光标到行尾的内容；如果n为1，清除从行首到光标的内容；如果n为2，清除整行 组合效果 Select Graphic Rendition(SGR) CSI中还包括一个可以设置显示属性的序列——CSI n m，称为Select Graphic Rendition (SGR)。 多个属性可以在同一个序列中设置，用分号分隔。每个属性设置后持续有效，直到再次用SGR序列重置。 SGR的n表示不同含义，例如
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-12-27 23:01:52 +0800 CST'>December 27, 2024</span>&nbsp;·&nbsp;3 min</footer>
+  <a class="entry-link" aria-label="post link to 终端转义序列介绍" href="http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">自定义的SSH代理服务器支持端口转发实践
     </h2>
   </header>
@@ -145,12 +145,12 @@
     <p>端口转发(Port Forwarding)是SSH中的一种机制，可以通过已经建立的SSH连接转发其他端口和应用的网络流量。SSH通道本身提供了加密和解密功能，保障了传输的安全性，所以端口转发机制也被称为隧道(tunneling)。</p>
   </div>
   <footer class="entry-footer"><span title='2024-11-03 16:22:39 +0800 CST'>November 3, 2024</span>&nbsp;·&nbsp;4 min</footer>
-  <a class="entry-link" aria-label="post link to 自定义的SSH代理服务器支持端口转发实践" href="https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/"></a>
+  <a class="entry-link" aria-label="post link to 自定义的SSH代理服务器支持端口转发实践" href="http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/"></a>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2024 <a href="https://rename2.github.io/">Rename</a></span> · 
+        <span>&copy; 2024 <a href="http://localhost:1313/">Rename</a></span> · 
 
     <span>
         Powered by

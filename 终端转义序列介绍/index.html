@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>终端转义序列介绍 | Rename</title>
+<meta name="keywords" content="">
+<meta name="description" content="概述
+当我们日常登录机器，无论是SSH、RDP还是VNC连接，我们都在使用终端。终端(Terminal)是一种输入输出设备，用于人类用户和计算机的交互。其中最常见的终端类型是面向字符的终端，也就是每次与主机通信一个字符，而不是一个数据块。字符可以是控制字符，也可以是a-zA-Z0-9这些可打印字符。一串字符组成了字符序列，可以用于控制终端和字体颜色、光标位置、切换输入模式（如替换模式）等，这样的字符序列称为转义序列。
+根据对控制字符和转义序列的支持程度不同，面向字符的终端被分为“哑终端”和“智能终端”。哑终端(dumb terminal)只能解释有限的控制字符（如CR、LF等），但无法处理清除行、移动光标等转义序列。智能终端(smart terminal)是有转义序列处理能力的终端，支持VT100、ANSI等转义序列。
+转义序列标准，如VT52，来源于物理硬件终端。这些终端使用供应商特定的转义序列处理比如光标放在屏幕上指定位置的操作，虽然功能相同，但序列不同。程序也不得不根据终端的型号发送对应的转义序列，以保证终端的正常显示。于是ANSI标准出现了，它制定了所有终端都采用的命令集，并且要求所有数字信息作为 ASCII 数字传输。VT100终端最先支持了ANSI序列，并由于在市场上的成功成为了后来终端仿真器事实上的标准。
+之后个人计算机开始普及，软件可以在PC上模拟、而不用增设昂贵的硬件终端。这种模拟终端的计算机程序被称为终端模拟器（终端仿真器）。xterm是X Window 系统的标准终端仿真器。X Window 系统是用于位图显示的窗口系统，常见于类Unix操作系统上（如Darwin，macOS的核心）。因为X协议一直处于版本11的状态，也称为X11。SSH中的X11 forwarding也是对于X Window的转发支持。xterm支持ANSI、VT52、VT100等控制协议，还添加了一些其他终端仿真器已采用的协议，如16色终端协议、88色终端协议和256色终端协议。打开终端、查询环境变量TERM，可能看到值为“xterm-256color”，表示采用xterm的256色终端协议。
+ANSI标准
+单字节字符也可以控制终端，这些字符称为C0控制代码(C0 control codes)，由ASCII 0到31共32个控制字符组成，例如
+
+BEL（0x7）：发出蜂鸣
+BS （0x8, \b）：退格，向左移动光标
+LF（0xA, \n）：换行
+CR（0xD, \r）：将光标移到第0列
+ESC（0x1B）：启动转义序列
+
+所有转义序列都以ASCII字符ESC开始，第二个字符指定对应的子序列或命令。其中第二个字符范围为@A-Z[\]^_的序列称为C1控制代码(C1 control codes)，例如
+
+ESC [：CSI(Control Sequence Introducer)，大部分常用序列都是CSI
+ESC ]：OSC(Operating System Command)，操作系统使用的控制序列，比如窗口标题、设置调色板颜色
+ESC c：重置为初始状态，包括图形格式、默认字体等
+
+Control Sequence Introducer(CSI)
+以ESC[（也可以写成\e[ 或者 033[）为前缀，CSI序列的基本格式为parameter intermediate final。
+
+parameter：0–9:;&lt;=&gt;?中的字符，表示控制操作的参数，比如删除的字符数量
+
+可以为空，序列会设置自定义的默认参数，比如默认为1、删除1个字符
+也可以是分号分隔的数字，如1;2;3，中间缺失的数字视为0，比如1;;3等同于1;0;3，设置显示属性序列中常用（设置字体为粗体、前景色、背景色等）
+
+
+intermediate：!&quot;#$%&amp;&#39;()*&#43;,-./中的任意数量字符，大部分序列不用
+final：@A-Z[\]^_`a–z{|}~中的单个字符，表示操作，比如K表示清除本行字符(Erase in Line)
+
+CSI示例
+
+CSI n C：光标向前移动n个单元格
+CSI n G：移动光标到第n列（n默认为1）
+CSI n K：清除本行字符（但不移动光标），如果n为0，清除从光标到行尾的内容；如果n为1，清除从行首到光标的内容；如果n为2，清除整行
+
+组合效果
+
+Select Graphic Rendition(SGR)
+CSI中还包括一个可以设置显示属性的序列——CSI n m，称为Select Graphic Rendition (SGR)。
+多个属性可以在同一个序列中设置，用分号分隔。每个属性设置后持续有效，直到再次用SGR序列重置。
+SGR的n表示不同含义，例如">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Rename (Alt + H)">Rename</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      终端转义序列介绍
+    </h1>
+    <div class="post-meta"><span title='2024-12-27 23:01:52 +0800 CST'>December 27, 2024</span>&nbsp;·&nbsp;3 min
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e6%a6%82%e8%bf%b0" aria-label="概述">概述</a></li>
+                <li>
+                    <a href="#ansi%e6%a0%87%e5%87%86" aria-label="ANSI标准">ANSI标准</a><ul>
+                        
+                <li>
+                    <a href="#control-sequence-introducercsi" aria-label="Control Sequence Introducer(CSI)">Control Sequence Introducer(CSI)</a></li>
+                <li>
+                    <a href="#select-graphic-renditionsgr" aria-label="Select Graphic Rendition(SGR)">Select Graphic Rendition(SGR)</a></li>
+                <li>
+                    <a href="#operating-system-commandosc" aria-label="Operating System Command(OSC)">Operating System Command(OSC)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e7%9a%84%e6%8d%95%e8%8e%b7" aria-label="转义序列的捕获">转义序列的捕获</a></li>
+                <li>
+                    <a href="#%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e7%9a%84%e5%ba%94%e7%94%a8" aria-label="转义序列的应用">转义序列的应用</a></li>
+                <li>
+                    <a href="#%e5%90%8e%e8%ae%b0" aria-label="后记">后记</a></li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99" aria-label="参考资料">参考资料</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="概述">概述<a hidden class="anchor" aria-hidden="true" href="#概述">#</a></h1>
+<p>当我们日常登录机器，无论是SSH、RDP还是VNC连接，我们都在使用终端。终端(Terminal)是一种输入输出设备，用于人类用户和计算机的交互。其中最常见的终端类型是面向字符的终端，也就是每次与主机通信一个字符，而不是一个数据块。字符可以是控制字符，也可以是<code>a-zA-Z0-9</code>这些可打印字符。一串字符组成了字符序列，可以用于控制终端和字体颜色、光标位置、切换输入模式（如替换模式）等，这样的字符序列称为转义序列。</p>
+<p>根据对控制字符和转义序列的支持程度不同，面向字符的终端被分为“哑终端”和“智能终端”。哑终端(dumb terminal)只能解释有限的控制字符（如<code>CR</code>、<code>LF</code>等），但无法处理清除行、移动光标等转义序列。智能终端(smart terminal)是有转义序列处理能力的终端，支持VT100、ANSI等转义序列。</p>
+<p>转义序列标准，如VT52，来源于物理硬件终端。这些终端使用供应商特定的转义序列处理比如光标放在屏幕上指定位置的操作，虽然功能相同，但序列不同。程序也不得不根据终端的型号发送对应的转义序列，以保证终端的正常显示。于是ANSI标准出现了，它制定了所有终端都采用的命令集，并且要求所有数字信息作为 ASCII 数字传输。VT100终端最先支持了ANSI序列，并由于在市场上的成功成为了后来终端仿真器事实上的标准。</p>
+<p>之后个人计算机开始普及，软件可以在PC上模拟、而不用增设昂贵的硬件终端。这种模拟终端的计算机程序被称为终端模拟器（终端仿真器）。xterm是X Window 系统的标准终端仿真器。X Window 系统是用于位图显示的窗口系统，常见于类Unix操作系统上（如Darwin，macOS的核心）。因为X协议一直处于版本11的状态，也称为X11。SSH中的X11 forwarding也是对于X Window的转发支持。xterm支持ANSI、VT52、VT100等控制协议，还添加了一些其他终端仿真器已采用的协议，如16色终端协议、88色终端协议和256色终端协议。打开终端、查询环境变量TERM，可能看到值为“xterm-256color”，表示采用xterm的256色终端协议。</p>
+<h1 id="ansi标准">ANSI标准<a hidden class="anchor" aria-hidden="true" href="#ansi标准">#</a></h1>
+<p>单字节字符也可以控制终端，这些字符称为C0控制代码(C0 control codes)，由ASCII 0到31共32个控制字符组成，例如</p>
+<ul>
+<li><code>BEL</code>（<code>0x7</code>）：发出蜂鸣</li>
+<li><code>BS</code> （<code>0x8</code>, <code>\b</code>）：退格，向左移动光标</li>
+<li><code>LF</code>（<code>0xA</code>, <code>\n</code>）：换行</li>
+<li><code>CR</code>（<code>0xD</code>, <code>\r</code>）：将光标移到第0列</li>
+<li><code>ESC</code>（<code>0x1B</code>）：启动转义序列</li>
+</ul>
+<p>所有转义序列都以ASCII字符ESC开始，第二个字符指定对应的子序列或命令。其中第二个字符范围为<code>@A-Z[\]^_</code>的序列称为C1控制代码(C1 control codes)，例如</p>
+<ul>
+<li><code>ESC [</code>：CSI(Control Sequence Introducer)，大部分常用序列都是CSI</li>
+<li><code>ESC ]</code>：OSC(Operating System Command)，操作系统使用的控制序列，比如窗口标题、设置调色板颜色</li>
+<li><code>ESC c</code>：重置为初始状态，包括图形格式、默认字体等</li>
+</ul>
+<h2 id="control-sequence-introducercsi">Control Sequence Introducer(CSI)<a hidden class="anchor" aria-hidden="true" href="#control-sequence-introducercsi">#</a></h2>
+<p>以<code>ESC[</code>（也可以写成<code>\e[</code> 或者 <code>033[</code>）为前缀，CSI序列的基本格式为<code>parameter</code> <code>intermediate</code> <code>final</code>。</p>
+<ul>
+<li>parameter：<code>0–9:;&lt;=&gt;?</code>中的字符，表示控制操作的参数，比如删除的字符数量
+<ul>
+<li>可以为空，序列会设置自定义的默认参数，比如默认为1、删除1个字符</li>
+<li>也可以是分号分隔的数字，如<code>1;2;3</code>，中间缺失的数字视为0，比如<code>1;;3</code>等同于<code>1;0;3</code>，设置显示属性序列中常用（设置字体为粗体、前景色、背景色等）</li>
+</ul>
+</li>
+<li>intermediate：<code>!&quot;#$%&amp;'()*+,-./</code>中的任意数量字符，大部分序列不用</li>
+<li>final：<code>@A-Z[\]^_`a–z{|}~</code>中的单个字符，表示操作，比如K表示清除本行字符(Erase in Line)</li>
+</ul>
+<p>CSI示例</p>
+<ul>
+<li><code>CSI n C</code>：光标向前移动n个单元格</li>
+<li><code>CSI n G</code>：移动光标到第n列（n默认为1）</li>
+<li><code>CSI n K</code>：清除本行字符（但不移动光标），如果n为0，清除从光标到行尾的内容；如果n为1，清除从行首到光标的内容；如果n为2，清除整行</li>
+</ul>
+<p>组合效果
+<img loading="lazy" src="/images/terminal-escape-sequence-csi.png"></p>
+<h2 id="select-graphic-renditionsgr">Select Graphic Rendition(SGR)<a hidden class="anchor" aria-hidden="true" href="#select-graphic-renditionsgr">#</a></h2>
+<p>CSI中还包括一个可以设置显示属性的序列——<code>CSI n m</code>，称为Select Graphic Rendition (SGR)。
+多个属性可以在同一个序列中设置，用分号分隔。每个属性设置后持续有效，直到再次用SGR序列重置。
+SGR的n表示不同含义，例如</p>
+<ul>
+<li>0：重置或正常</li>
+<li>1：粗体或颜色增强</li>
+<li>2：细体或颜色减弱，比如用于打印debug信息</li>
+<li>3：斜体</li>
+<li>4：下划线</li>
+<li>7：反转前景色和背景色</li>
+<li>30-37：设置前景色，只有八种标准色可选</li>
+<li>38：设置前景色，支持更多颜色、支持RGB格式</li>
+<li>40-47：设置背景色，支持和前景色一样的八种标准色，只是代码不同</li>
+<li>48：设置背景色，支持更多颜色、支持RGB格式</li>
+</ul>
+<p>最初只定义了八种标准色：</p>
+<table>
+  <thead>
+      <tr>
+          <th>颜色</th>
+          <th>前景色</th>
+          <th>后景色</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>黑色 Black</td>
+          <td>30</td>
+          <td>40</td>
+      </tr>
+      <tr>
+          <td>红色 Red</td>
+          <td>31</td>
+          <td>41</td>
+      </tr>
+      <tr>
+          <td>绿色 Green</td>
+          <td>32</td>
+          <td>42</td>
+      </tr>
+      <tr>
+          <td>&hellip;</td>
+          <td>&hellip;</td>
+          <td>&hellip;</td>
+      </tr>
+      <tr>
+          <td>白色 White</td>
+          <td>37</td>
+          <td>47</td>
+      </tr>
+  </tbody>
+</table>
+<p>这些颜色现在也经常直接使用，比如<code>ESC[37;40m</code>设置为白色字母、黑色背景，<code>ESC[31m</code>设置为红色，<code>ESC[1;31m</code>设置为亮红色，以及用<code>ESC[0m</code>重置所有属性。</p>
+<p>当需要更多颜色，可以使用预定义的256色卡中的颜色，或者用RGB格式设置</p>
+<ul>
+<li><code>ESC[38;5;n m</code>：38表示设置前景色，5是固定参数表示使用色卡，n为颜色值，比如105表示蓝紫色</li>
+<li><code>ESC[48;2;r;g;b m</code>：48表示设置背景色，2是固定参数表示使用RGB格式，r、g、b分别设置为对应的数值</li>
+</ul>
+<p>运用效果
+<img loading="lazy" src="/images/terminal-escape-sequence-sgr.png"></p>
+<h2 id="operating-system-commandosc">Operating System Command(OSC)<a hidden class="anchor" aria-hidden="true" href="#operating-system-commandosc">#</a></h2>
+<p>另外一种序列是OSC，前缀是以<code>ESC]</code>，通常以数字开头，后面跟着分号和剩余部分，最终以终止符（<code>\a</code>和<code>\</code>）结束。
+最常见的用法是设置窗口标题</p>
+<ul>
+<li><code>OSC 0;{title}\a</code>：设置窗口和标签页标题</li>
+<li><code>OSC 1;{title}\a</code>：设置标签页标题</li>
+<li><code>OSC 2;{title}\a</code>：设置窗口标题</li>
+</ul>
+<p><img loading="lazy" src="/images/terminal-escape-sequence-osc.png"></p>
+<h1 id="转义序列的捕获">转义序列的捕获<a hidden class="anchor" aria-hidden="true" href="#转义序列的捕获">#</a></h1>
+<p>既然很多操作实际由转义序列承载和完成，那怎么获取到对应的序列呢？以下代码将终端设置为raw模式，直接读取原始的序列。</p>
+<pre tabindex="0"><code>package main
+
+import (
+    &#34;bytes&#34;
+    &#34;fmt&#34;
+    &#34;os&#34;
+    &#34;os/exec&#34;
+    &#34;sync/atomic&#34;
+
+    &#34;github.com/creack/pty&#34;
+    &#34;golang.org/x/term&#34;
+)
+
+func main() {
+    err := run()
+    if err != nil {
+        fmt.Println(&#34;err:&#34;, err)
+        os.Exit(1)
+    }
+}
+
+func run() error {
+    os.Setenv(&#34;TERM&#34;, &#34;xterm-256color&#34;)
+
+    c := exec.Command(&#34;/bin/sh&#34;)
+    pty, err := pty.Start(c)
+    if err != nil {
+        return err
+    }
+    defer func() { _ = pty.Close() }()
+
+    fds := []int{int(os.Stdin.Fd()), int(os.Stdout.Fd())}
+    for _, fd := range fds {
+        fd := fd
+        oldState, err := term.MakeRaw(fd)
+        if err != nil {
+            return err
+        }
+        defer func() { _ = term.Restore(fd, oldState) }()
+    }
+
+    typing := atomic.Bool{}
+    typing.Store(false)
+
+    go func() {
+        buf := make([]byte, 512)
+        sequence := make([]byte, 0, 1024)
+        for {
+            n, err := os.Stdin.Read(buf)
+            if err != nil {
+                return
+            }
+
+            sequence = append(sequence, buf[:n]...)
+            if bytes.ContainsAny(sequence, &#34;\r\n&#34;) {
+                typing.Store(false)
+                fmt.Printf(debugFormat(&#34;\r\nIn : %q\r\n&#34;), sequence)
+                sequence = sequence[:0]
+            } else {
+                typing.Store(true)
+            }
+
+            _, err = pty.Write(buf[:n])
+            if err != nil {
+                return
+            }
+        }
+    }()
+
+    buf := make([]byte, 512)
+    sequence := make([]byte, 0, 1024)
+    for {
+        n, err := pty.Read(buf)
+        if err != nil {
+            return nil
+        }
+
+        sequence = append(sequence, buf[:n]...)
+        if !typing.Load() {
+            fmt.Printf(debugFormat(&#34;Out: %q\r\n&#34;), sequence)
+            sequence = sequence[:0]
+        }
+
+        _, err = os.Stdout.Write(buf[:n])
+        if err != nil {
+            return nil
+        }
+    }
+}
+
+func debugFormat(str string) string {
+    return fmt.Sprintf(&#34;\x1b[0;2m%s\x1b[0m&#34;, str)
+}
+</code></pre><p>尝试不同的输入和快捷键，可以看到对应的输入和输出序列。再结合前面提到的转义序列格式，可以推断出最终效果。
+<img loading="lazy" src="/images/terminal-escape-sequence-capture.png"></p>
+<h1 id="转义序列的应用">转义序列的应用<a hidden class="anchor" aria-hidden="true" href="#转义序列的应用">#</a></h1>
+<p>最常见的使用方式是显示属性的设置，比如在<code>ls --color</code>中，就分别为目录、可执行文件、软链和普通文件等设置了不同的颜色。
+使用<code>dircolors</code>可以查看当前的颜色设置，也可以通过环境变量自定义颜色设置，比如将目录颜色设置为黄色（原来的目录设置为<code>01;34</code>，即颜色增强的蓝色）。
+<img loading="lazy" src="/images/terminal-escape-sequence-ls.png"></p>
+<p>当脚本打印日志时，也可以使用序列突出显示错误日志。前面的Go代码中打印debug信息就用了转义序列。</p>
+<pre tabindex="0"><code>print_error(){
+    printf &#34;\e[1;31m$1\e[0m\n&#34;
+}
+</code></pre><p>如果想实现一个自己的终端模拟器，或者截取了服务器端流量、想要分析对应的执行命令，则需要尽可能多地识别和解析常见序列，才能得到正确的命令内容、实现交互效果。</p>
+<ul>
+<li><a href="https://pkg.go.dev/golang.org/x/term">golang.org/x/term</a>库支持启动VT100终端、读取相关输入。</li>
+<li><a href="https://github.com/liamg/darktile">darktile</a>实现了一款自定义的终端模拟器，对转义序列支持良好，很有参考价值。</li>
+</ul>
+<h1 id="后记">后记<a hidden class="anchor" aria-hidden="true" href="#后记">#</a></h1>
+<blockquote>
+<p>I sometimes think of my computer as a very large house. I visit this house every day and know most of the rooms on the ground floor, but there are bedrooms I’ve never been in, closets I haven’t opened, nooks and crannies that I’ve never explored. I feel compelled to learn more about my computer the same way anyone would feel compelled to see a room they had never visited in their own home.<br>
+<em>source: <a href="https://twobithistory.org/2019/08/22/readline.html">https://twobithistory.org/2019/08/22/readline.html</a></em></p>
+</blockquote>
+<p>就像上述博客中所说的，了解终端转义序列就像是走进计算机中一个从未到访的房间。细细探索，又是一方新奇、有趣的天地。</p>
+<h1 id="参考资料">参考资料<a hidden class="anchor" aria-hidden="true" href="#参考资料">#</a></h1>
+<p><a href="https://en.wikipedia.org/wiki/Terminal_emulator">https://en.wikipedia.org/wiki/Terminal_emulator</a>
+<a href="https://en.wikipedia.org/wiki/ANSI_escape_code">https://en.wikipedia.org/wiki/ANSI_escape_code</a>
+<a href="https://tiswww.case.edu/php/chet/readline/readline.html">https://tiswww.case.edu/php/chet/readline/readline.html</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/">
+    <span class="title">Next »</span>
+    <br>
+    <span>自定义的SSH代理服务器支持端口转发实践</span>
+  </a>
+</nav>
+
+
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on x"
+            href="https://x.com/intent/tweet/?text=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d&amp;url=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f&amp;hashtags=">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f&amp;title=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d&amp;summary=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d&amp;source=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on reddit"
+            href="https://reddit.com/submit?url=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f&title=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on whatsapp"
+            href="https://api.whatsapp.com/send?text=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d%20-%20http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on telegram"
+            href="https://telegram.me/share/url?text=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d&amp;url=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 终端转义序列介绍 on ycombinator"
+            href="https://news.ycombinator.com/submitlink?t=%e7%bb%88%e7%ab%af%e8%bd%ac%e4%b9%89%e5%ba%8f%e5%88%97%e4%bb%8b%e7%bb%8d&u=http%3a%2f%2flocalhost%3a1313%2f%25E7%25BB%2588%25E7%25AB%25AF%25E8%25BD%25AC%25E4%25B9%2589%25E5%25BA%258F%25E5%2588%2597%25E4%25BB%258B%25E7%25BB%258D%2f">
+            <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+                <path
+                    d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="http://localhost:1313/">Rename</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

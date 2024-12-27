@@ -2,17 +2,67 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Rename</title>
-    <link>https://rename2.github.io/</link>
+    <link>http://localhost:1313/</link>
     <description>Recent content on Rename</description>
     <generator>Hugo -- 0.136.5</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 03 Nov 2024 16:22:39 +0800</lastBuildDate>
-    <atom:link href="https://rename2.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 27 Dec 2024 23:01:52 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>终端转义序列介绍</title>
+      <link>http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Fri, 27 Dec 2024 23:01:52 +0800</pubDate>
+      <guid>http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
+&lt;p&gt;当我们日常登录机器，无论是SSH、RDP还是VNC连接，我们都在使用终端。终端(Terminal)是一种输入输出设备，用于人类用户和计算机的交互。其中最常见的终端类型是面向字符的终端，也就是每次与主机通信一个字符，而不是一个数据块。字符可以是控制字符，也可以是&lt;code&gt;a-zA-Z0-9&lt;/code&gt;这些可打印字符。一串字符组成了字符序列，可以用于控制终端和字体颜色、光标位置、切换输入模式（如替换模式）等，这样的字符序列称为转义序列。&lt;/p&gt;
+&lt;p&gt;根据对控制字符和转义序列的支持程度不同，面向字符的终端被分为“哑终端”和“智能终端”。哑终端(dumb terminal)只能解释有限的控制字符（如&lt;code&gt;CR&lt;/code&gt;、&lt;code&gt;LF&lt;/code&gt;等），但无法处理清除行、移动光标等转义序列。智能终端(smart terminal)是有转义序列处理能力的终端，支持VT100、ANSI等转义序列。&lt;/p&gt;
+&lt;p&gt;转义序列标准，如VT52，来源于物理硬件终端。这些终端使用供应商特定的转义序列处理比如光标放在屏幕上指定位置的操作，虽然功能相同，但序列不同。程序也不得不根据终端的型号发送对应的转义序列，以保证终端的正常显示。于是ANSI标准出现了，它制定了所有终端都采用的命令集，并且要求所有数字信息作为 ASCII 数字传输。VT100终端最先支持了ANSI序列，并由于在市场上的成功成为了后来终端仿真器事实上的标准。&lt;/p&gt;
+&lt;p&gt;之后个人计算机开始普及，软件可以在PC上模拟、而不用增设昂贵的硬件终端。这种模拟终端的计算机程序被称为终端模拟器（终端仿真器）。xterm是X Window 系统的标准终端仿真器。X Window 系统是用于位图显示的窗口系统，常见于类Unix操作系统上（如Darwin，macOS的核心）。因为X协议一直处于版本11的状态，也称为X11。SSH中的X11 forwarding也是对于X Window的转发支持。xterm支持ANSI、VT52、VT100等控制协议，还添加了一些其他终端仿真器已采用的协议，如16色终端协议、88色终端协议和256色终端协议。打开终端、查询环境变量TERM，可能看到值为“xterm-256color”，表示采用xterm的256色终端协议。&lt;/p&gt;
+&lt;h1 id=&#34;ansi标准&#34;&gt;ANSI标准&lt;/h1&gt;
+&lt;p&gt;单字节字符也可以控制终端，这些字符称为C0控制代码(C0 control codes)，由ASCII 0到31共32个控制字符组成，例如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;BEL&lt;/code&gt;（&lt;code&gt;0x7&lt;/code&gt;）：发出蜂鸣&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;BS&lt;/code&gt; （&lt;code&gt;0x8&lt;/code&gt;, &lt;code&gt;\b&lt;/code&gt;）：退格，向左移动光标&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LF&lt;/code&gt;（&lt;code&gt;0xA&lt;/code&gt;, &lt;code&gt;\n&lt;/code&gt;）：换行&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CR&lt;/code&gt;（&lt;code&gt;0xD&lt;/code&gt;, &lt;code&gt;\r&lt;/code&gt;）：将光标移到第0列&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ESC&lt;/code&gt;（&lt;code&gt;0x1B&lt;/code&gt;）：启动转义序列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所有转义序列都以ASCII字符ESC开始，第二个字符指定对应的子序列或命令。其中第二个字符范围为&lt;code&gt;@A-Z[\]^_&lt;/code&gt;的序列称为C1控制代码(C1 control codes)，例如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ESC [&lt;/code&gt;：CSI(Control Sequence Introducer)，大部分常用序列都是CSI&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ESC ]&lt;/code&gt;：OSC(Operating System Command)，操作系统使用的控制序列，比如窗口标题、设置调色板颜色&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ESC c&lt;/code&gt;：重置为初始状态，包括图形格式、默认字体等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;control-sequence-introducercsi&#34;&gt;Control Sequence Introducer(CSI)&lt;/h2&gt;
+&lt;p&gt;以&lt;code&gt;ESC[&lt;/code&gt;（也可以写成&lt;code&gt;\e[&lt;/code&gt; 或者 &lt;code&gt;033[&lt;/code&gt;）为前缀，CSI序列的基本格式为&lt;code&gt;parameter&lt;/code&gt; &lt;code&gt;intermediate&lt;/code&gt; &lt;code&gt;final&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;parameter：&lt;code&gt;0–9:;&amp;lt;=&amp;gt;?&lt;/code&gt;中的字符，表示控制操作的参数，比如删除的字符数量
+&lt;ul&gt;
+&lt;li&gt;可以为空，序列会设置自定义的默认参数，比如默认为1、删除1个字符&lt;/li&gt;
+&lt;li&gt;也可以是分号分隔的数字，如&lt;code&gt;1;2;3&lt;/code&gt;，中间缺失的数字视为0，比如&lt;code&gt;1;;3&lt;/code&gt;等同于&lt;code&gt;1;0;3&lt;/code&gt;，设置显示属性序列中常用（设置字体为粗体、前景色、背景色等）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;intermediate：&lt;code&gt;!&amp;quot;#$%&amp;amp;&#39;()*+,-./&lt;/code&gt;中的任意数量字符，大部分序列不用&lt;/li&gt;
+&lt;li&gt;final：&lt;code&gt;@A-Z[\]^_`a–z{|}~&lt;/code&gt;中的单个字符，表示操作，比如K表示清除本行字符(Erase in Line)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;CSI示例&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;CSI n C&lt;/code&gt;：光标向前移动n个单元格&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CSI n G&lt;/code&gt;：移动光标到第n列（n默认为1）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CSI n K&lt;/code&gt;：清除本行字符（但不移动光标），如果n为0，清除从光标到行尾的内容；如果n为1，清除从行首到光标的内容；如果n为2，清除整行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;组合效果
+&lt;img loading=&#34;lazy&#34; src=&#34;http://localhost:1313/images/terminal-escape-sequence-csi.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;select-graphic-renditionsgr&#34;&gt;Select Graphic Rendition(SGR)&lt;/h2&gt;
+&lt;p&gt;CSI中还包括一个可以设置显示属性的序列——&lt;code&gt;CSI n m&lt;/code&gt;，称为Select Graphic Rendition (SGR)。
+多个属性可以在同一个序列中设置，用分号分隔。每个属性设置后持续有效，直到再次用SGR序列重置。
+SGR的n表示不同含义，例如&lt;/p&gt;</description>
+    </item>
     <item>
       <title>自定义的SSH代理服务器支持端口转发实践</title>
-      <link>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
+      <link>http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 03 Nov 2024 16:22:39 +0800</pubDate>
-      <guid>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
+      <guid>http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
       <description>端口转发(Port Forwarding)是SSH中的一种机制，可以通过已经建立的SSH连接转发其他端口和应用的网络流量。SSH通道本身提供了加密和解密功能，保障了传输的安全性，所以端口转发机制也被称为隧道(tunneling)。</description>
     </item>
   </channel>
