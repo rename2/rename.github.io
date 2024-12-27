@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Rename</title>
-    <link>http://localhost:1313/</link>
+    <link>https://rename2.github.io/</link>
     <description>Recent content on Rename</description>
     <generator>Hugo -- 0.136.5</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 27 Dec 2024 23:01:52 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://rename2.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>终端转义序列介绍</title>
-      <link>http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://rename2.github.io/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Fri, 27 Dec 2024 23:01:52 +0800</pubDate>
-      <guid>http://localhost:1313/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://rename2.github.io/%E7%BB%88%E7%AB%AF%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
 &lt;p&gt;当我们日常登录机器，无论是SSH、RDP还是VNC连接，我们都在使用终端。终端(Terminal)是一种输入输出设备，用于人类用户和计算机的交互。其中最常见的终端类型是面向字符的终端，也就是每次与主机通信一个字符，而不是一个数据块。字符可以是控制字符，也可以是&lt;code&gt;a-zA-Z0-9&lt;/code&gt;这些可打印字符。一串字符组成了字符序列，可以用于控制终端和字体颜色、光标位置、切换输入模式（如替换模式）等，这样的字符序列称为转义序列。&lt;/p&gt;
 &lt;p&gt;根据对控制字符和转义序列的支持程度不同，面向字符的终端被分为“哑终端”和“智能终端”。哑终端(dumb terminal)只能解释有限的控制字符（如&lt;code&gt;CR&lt;/code&gt;、&lt;code&gt;LF&lt;/code&gt;等），但无法处理清除行、移动光标等转义序列。智能终端(smart terminal)是有转义序列处理能力的终端，支持VT100、ANSI等转义序列。&lt;/p&gt;
@@ -52,7 +52,7 @@
 &lt;li&gt;&lt;code&gt;CSI n K&lt;/code&gt;：清除本行字符（但不移动光标），如果n为0，清除从光标到行尾的内容；如果n为1，清除从行首到光标的内容；如果n为2，清除整行&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;组合效果
-&lt;img loading=&#34;lazy&#34; src=&#34;http://localhost:1313/images/terminal-escape-sequence-csi.png&#34;&gt;&lt;/p&gt;
+&lt;img loading=&#34;lazy&#34; src=&#34;https://rename2.github.io/images/terminal-escape-sequence-csi.png&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;select-graphic-renditionsgr&#34;&gt;Select Graphic Rendition(SGR)&lt;/h2&gt;
 &lt;p&gt;CSI中还包括一个可以设置显示属性的序列——&lt;code&gt;CSI n m&lt;/code&gt;，称为Select Graphic Rendition (SGR)。
 多个属性可以在同一个序列中设置，用分号分隔。每个属性设置后持续有效，直到再次用SGR序列重置。
@@ -60,9 +60,9 @@ SGR的n表示不同含义，例如&lt;/p&gt;</description>
     </item>
     <item>
       <title>自定义的SSH代理服务器支持端口转发实践</title>
-      <link>http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
+      <link>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 03 Nov 2024 16:22:39 +0800</pubDate>
-      <guid>http://localhost:1313/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
+      <guid>https://rename2.github.io/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84ssh%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%94%AF%E6%8C%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%AE%9E%E8%B7%B5/</guid>
       <description>端口转发(Port Forwarding)是SSH中的一种机制，可以通过已经建立的SSH连接转发其他端口和应用的网络流量。SSH通道本身提供了加密和解密功能，保障了传输的安全性，所以端口转发机制也被称为隧道(tunneling)。</description>
     </item>
   </channel>
