@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MySQL on Rename</title>
+    <link>https://rename2.github.io/categories/mysql/</link>
+    <description>Recent content in MySQL on Rename</description>
+    <generator>Hugo -- 0.136.5</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 04 Jan 2025 21:34:31 +0800</lastBuildDate>
+    <atom:link href="https://rename2.github.io/categories/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Proxy 实践</title>
+      <link>https://rename2.github.io/mysql-proxy-%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sat, 04 Jan 2025 21:34:31 +0800</pubDate>
+      <guid>https://rename2.github.io/mysql-proxy-%E5%AE%9E%E8%B7%B5/</guid>
+      <description>实现一个mysql proxy，动态转发请求到多台数据库并记录用户执行的SQL语句。</description>
+    </item>
+  </channel>
+</rss>
